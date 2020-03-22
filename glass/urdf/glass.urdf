@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="glass">
+  <link
+    name="glass">
+    <inertial>
+      <origin
+        xyz="4.2478E-18 6.34746630699617E-18 0.031688"
+        rpy="0 0 0" />
+      <mass
+        value="0.035" />
+      <inertia
+        ixx="7.0865E-05"
+        ixy="-4.1359E-21"
+        ixz="-4.7676E-20"
+        iyy="7.0865E-05"
+        iyz="-4.01624445195051E-21"
+        izz="1.5648E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="1.5707963267949 0 0" />
+      <geometry>
+        <mesh
+          filename="/glass.obj" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.94118 0.96078 0.96863 0.2" />
+        <texture
+          filename="/textures/" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="1.5707963267949 0 0" />
+      <geometry>
+        <mesh
+          filename="/glass_mod.obj" />
+      </geometry>
+    </collision>
+  </link>
+</robot>
