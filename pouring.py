@@ -2,6 +2,7 @@ import os
 import pybullet as pb 
 import time 
 import math
+import pybullet_data
 
 path_data = '/home/aswin/Desktop/pouring_sim/pybullet_data1'
 physicsClient = pb.connect(pb.GUI)
@@ -10,7 +11,8 @@ jointIds = []
 paramIds = []
 
 pb.setInternalSimFlags(0)
-
+pb.setAdditionalSearchPath(pybullet_data.getDataPath())
+plane = pb.loadURDF("plane.urdf")
 objects = pb.loadSDF(os.path.join(path_data, "kuka_iiwa/kuka_with_gripper.sdf"))
 pb.loadURDF(os.path.join(path_data, "table/table.urdf"), 0.0, -1.0, 0, 0.0, 0.0, 0.0, 1.0)
 glass = pb.loadURDF("glass2/urdf/glass.urdf", [-0.15, -0.6, 0.625],[0.0, 0.0, 0.0, 1.0])#, useFixedBase= 1)
@@ -93,9 +95,9 @@ print("Num joints:", numJoints)
 
 pose = [0, 0, 0, 0, 0, 0, 0, 0.0, 0.0, 0.0, 0.0]
 
-fingerAForce = 4
-fingerBForce = 4
-fingerTipForce = 4
+fingerAForce = 3
+fingerBForce = 3
+fingerTipForce = 2
 
 for j in range(7):
 
@@ -106,9 +108,9 @@ for i in range(11):
   pb.setJointMotorControl2(kukaUid, i, pb.POSITION_CONTROL, pose[i])#, force=5 * 100.)
 time.sleep(1)
 
-paramIds.append(pb.addUserDebugParameter("x", -0.3, 0.3, -0.15 ))
-paramIds.append(pb.addUserDebugParameter("y", -1.4, 1.0, -0.32 ))
-paramIds.append(pb.addUserDebugParameter("z", 0.64, 1.1, 0.66 ))
+paramIds.append(pb.addUserDebugParameter("x", -0.3, 0.3, -0.1485 ))
+paramIds.append(pb.addUserDebugParameter("y", -1.4, 1.0, -0.418 ))
+paramIds.append(pb.addUserDebugParameter("z", 0.64, 1.1, 0.65 ))
 paramIds.append(pb.addUserDebugParameter("orientation", -2.0, 2.0, 0.0 ))
 paramIds.append(pb.addUserDebugParameter("gripper",0.06,0.5,0.4))
 paramIds.append(pb.addUserDebugParameter("control",0.0,1.0,0.0))
@@ -200,6 +202,7 @@ while(1):
       temp[i]= targetPos[i]
     if(targetPos[5]>0.5):
       break
+
 print("Control orientation...")
 while(1):  
   targetPos = []
