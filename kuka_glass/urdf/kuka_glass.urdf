@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="kuka_glass">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.011338 0.0059891 0.071506"
+        rpy="0 0 0" />
+      <mass
+        value="5.4761" />
+      <inertia
+        ixx="0.02569"
+        ixy="0.0027165"
+        ixz="0.00059767"
+        iyy="0.029398"
+        iyz="-0.00031576"
+        izz="0.033479" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_glass/meshes/base_link.STL" />
+      </geometry>
+     <material name="Orange"/>   
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_glass/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="link_1">
+    <inertial>
+      <origin
+        xyz="0.037902 -0.033792 0.12736"
+        rpy="0 0 0" />
+      <mass
+        value="4.1083" />
+      <inertia
+        ixx="0.031298"
+        ixy="0.001405"
+        ixz="-0.0056471"
+        iyy="0.033271"
+        iyz="0.0047181"
+        izz="0.014006" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_glass/meshes/link_1.STL" />
+      </geometry>
+      <material name="Blue"/>
+
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_glass/meshes/link_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint1"
+    type="revolute">
+    <origin
+      xyz="0 0 0.14702"
+      rpy="0 -0.28924 -1.9847" />
+    <parent
+      link="base_link" />
+    <child
+      link="link_1" />
+    <axis
+      xyz="0.28522 0 0.95846" />
+    <limit
+      lower="-2.96"
+      upper="2.96"
+      effort="300"
+      velocity="10" />
+    <dynamics
+      damping="0.5"
+      />
+  </joint>
+  <link
+    name="link_2">
+    <inertial>
+      <origin
+        xyz="0.00015771 0.041977 0.058815"
+        rpy="0 0 0" />
+      <mass
+        value="3.9509" />
+      <inertia
+        ixx="0.030589"
+        ixy="-2.25E-05"
+        ixz="3.3192E-05"
+        iyy="0.030415"
+        iyz="0.0048837"
+        izz="0.011015" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_glass/meshes/link_2.STL" />
+      </geometry>
+	<material name="Orange"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_glass/meshes/link_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint2"
+    type="revolute">
+    <origin
+      xyz="0.060747 0 0.20414"
+      rpy="0 1.5159 0" />
+    <parent
+      link="link_1" />
+    <child
+      link="link_2" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-2.96"
+      upper="2.96"
+      effort="300"
+      velocity="10" />
+    <dynamics
+      damping="0.5"
+ />
+  </joint>
+  <link
+    name="link_3">
+    <inertial>
+      <origin
+        xyz="2.3106E-06 0.029561 0.14751"
+        rpy="0 0 0" />
+      <mass
+        value="3.1749" />
+      <inertia
+        ixx="0.025078"
+        ixy="-6.2752E-08"
+        ixz="-1.0088E-07"
+        iyy="0.023807"
+        iyz="-0.0048734"
+        izz="0.0076079" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_glass/meshes/link_3.STL" />
+      </geometry>
+      <material name="Blue"/>
+
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_glass/meshes/link_3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint3"
+    type="revolute">
+    <origin
+      xyz="0 0 0.18349"
+      rpy="0 0 -1.147" />
+    <parent
+      link="link_2" />
+    <child
+      link="link_3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-2.96"
+      upper="2.96"
+      effort="300"
+      velocity="10" />
+    <dynamics
+      damping="0.5"
+ />
+  </joint>
+  <link
+    name="link_4">
+    <inertial>
+      <origin
+        xyz="1.4671E-06 -0.034257 0.067429"
+        rpy="0 0 0" />
+      <mass
+        value="2.7391" />
+      <inertia
+        ixx="0.017201"
+        ixy="-4.365E-08"
+        ixz="3.3504E-08"
+        iyy="0.016393"
+        iyz="-0.0028452"
+        izz="0.0061369" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_glass/meshes/link_4.STL" />
+      </geometry>
+    <material name="Orange"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_glass/meshes/link_4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint4"
+    type="revolute">
+    <origin
+      xyz="0 0 0.23651"
+      rpy="0 -0.47963 0" />
+    <parent
+      link="link_3" />
+    <child
+      link="link_4" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-2.96"
+      upper="2.96"
+      effort="300"
+      velocity="10" />
+    <dynamics
+      damping="0.5"
+ />
+  </joint>
+  <link
+    name="link_5">
+    <inertial>
+      <origin
+        xyz="-0.00012038 -0.021388 0.17353"
+        rpy="0 0 0" />
+      <mass
+        value="1.6936" />
+      <inertia
+        ixx="0.010078"
+        ixy="1.6205E-06"
+        ixz="-6.9306E-07"
+        iyy="0.0087016"
+        iyz="0.0030901"
+        izz="0.0044688" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_glass/meshes/link_5.STL" />
+      </geometry>
+      <material name="Blue"/>
+
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_glass/meshes/link_5.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint5"
+    type="revolute">
+    <origin
+      xyz="0 0 0.086445"
+      rpy="0 0 2.9616" />
+    <parent
+      link="link_4" />
+    <child
+      link="link_5" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-2.96"
+      upper="2.96"
+      effort="300"
+      velocity="10" />
+    <dynamics
+      damping="0.5"
+ />
+  </joint>
+  <link
+    name="link_6">
+    <inertial>
+      <origin
+        xyz="5.731E-06 0.00034304 0.00063484"
+        rpy="0 0 0" />
+      <mass
+        value="1.8095" />
+      <inertia
+        ixx="0.0049026"
+        ixy="2.5889E-07"
+        ixz="1.7497E-07"
+        iyy="0.0046942"
+        iyz="0.00024415"
+        izz="0.003567" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_glass/meshes/link_6.STL" />
+      </geometry>
+     <material name="Orange"/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_glass/meshes/link_6.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint6"
+    type="revolute">
+    <origin
+      xyz="0 0 0.31356"
+      rpy="0 0.44498 0" />
+    <parent
+      link="link_5" />
+    <child
+      link="link_6" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-2.96"
+      upper="2.96"
+      effort="300"
+      velocity="10" />
+    <dynamics
+      damping="0.5"
+	 />
+  </joint>
+  <link
+    name="gripper">
+    <inertial>
+      <origin
+        xyz="-0.00066987 -0.012519 0.16647"
+        rpy="0 0 0" />
+      <mass
+        value="0.12723" />
+      <inertia
+        ixx="0.0001263"
+        ixy="-1.0897E-06"
+        ixz="2.3683E-07"
+        iyy="6.4894E-05"
+        iyz="-4.2015E-09"
+        izz="0.00011998" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_glass/meshes/gripper.STL" />
+      </geometry>
+    <material name=""/>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://kuka_glass/meshes/gripper.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint7"
+    type="revolute">
+    <origin
+      xyz="0 0.01 0"
+      rpy="0 0 0.058262" />
+    <parent
+      link="link_6" />
+    <child
+      link="gripper" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-2.96"
+      upper="2.96"
+      effort="300"
+      velocity="10" />
+    <dynamics
+      damping="0.5"
+ />
+  </joint>
+</robot>

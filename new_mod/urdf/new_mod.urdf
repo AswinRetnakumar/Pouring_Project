@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="new_mod">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.011338 0.071506 -0.0059891"
+        rpy="0 0 0" />
+      <mass
+        value="5.4761" />
+      <inertia
+        ixx="0.02569"
+        ixy="0.00059767"
+        ixz="-0.0027165"
+        iyy="0.033479"
+        iyz="0.00031576"
+        izz="0.029398" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://new_mod/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.9098 0.44314 0.031373 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://new_mod/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="link_1">
+    <inertial>
+      <origin
+        xyz="2.414E-06 -0.033791 0.13288"
+        rpy="0 0 0" />
+      <mass
+        value="4.1084" />
+      <inertia
+        ixx="0.032979"
+        ixy="9.4112E-07"
+        ixz="-9.7162E-07"
+        iyy="0.033271"
+        iyz="0.004923"
+        izz="0.012325" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://new_mod/meshes/link_1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://new_mod/meshes/link_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="j1"
+    type="continuous">
+    <origin
+      xyz="0 0 0.14702"
+      rpy="0 0 -1.3284" />
+    <parent
+      link="base_link" />
+    <child
+      link="link_1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-2.96"
+      upper="2.96"
+      effort="300"
+      velocity="10" />
+    <dynamics
+      damping="0.5" />
+  </joint>
+  <link
+    name="link_2">
+    <inertial>
+      <origin
+        xyz="0.0001613 0.041985 0.058808"
+        rpy="0 0 0" />
+      <mass
+        value="3.9504" />
+      <inertia
+        ixx="0.030593"
+        ixy="-2.2422E-05"
+        ixz="3.3296E-05"
+        iyy="0.030418"
+        iyz="0.0048863"
+        izz="0.011016" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://new_mod/meshes/link_2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://new_mod/meshes/link_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="j2"
+    type="continuous">
+    <origin
+      xyz="0 0 0.21298"
+      rpy="0 -0.07089 0" />
+    <parent
+      link="link_1" />
+    <child
+      link="link_2" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-2.96"
+      upper="2.96"
+      effort="300"
+      velocity="10" />
+    <dynamics
+      damping="0.5" />
+  </joint>
+  <link
+    name="link_3">
+    <inertial>
+      <origin
+        xyz="2.0176E-06 0.029561 0.13477"
+        rpy="0 0 0" />
+      <mass
+        value="3.1749" />
+      <inertia
+        ixx="0.025078"
+        ixy="-7.8168E-08"
+        ixz="-1.1637E-07"
+        iyy="0.023807"
+        iyz="-0.0048734"
+        izz="0.0076079" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://new_mod/meshes/link_3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://new_mod/meshes/link_3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="j3"
+    type="continuous">
+    <origin
+      xyz="0 0 0.19624"
+      rpy="0 0 -0.35301" />
+    <parent
+      link="link_2" />
+    <child
+      link="link_3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-2.96"
+      upper="2.96"
+      effort="300"
+      velocity="10" />
+    <dynamics
+      damping="0.5" />
+  </joint>
+  <link
+    name="link_4">
+    <inertial>
+      <origin
+        xyz="1.4194E-06 -0.034258 0.067429"
+        rpy="0 0 0" />
+      <mass
+        value="2.7392" />
+      <inertia
+        ixx="0.017201"
+        ixy="-6.6574E-08"
+        ixz="-8.9875E-08"
+        iyy="0.016393"
+        iyz="-0.0028452"
+        izz="0.006137" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://new_mod/meshes/link_4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://new_mod/meshes/link_4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="j4"
+    type="continuous">
+    <origin
+      xyz="0 0 0.22376"
+      rpy="0 -1.5047 0" />
+    <parent
+      link="link_3" />
+    <child
+      link="link_4" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-2.96"
+      upper="2.96"
+      effort="300"
+      velocity="10" />
+    <dynamics
+      damping="0.5" />
+  </joint>
+  <link
+    name="link_5">
+    <inertial>
+      <origin
+        xyz="-0.00012042 -0.021389 0.081997"
+        rpy="0 0 0" />
+      <mass
+        value="1.6935" />
+      <inertia
+        ixx="0.010078"
+        ixy="1.6292E-06"
+        ixz="-6.7297E-07"
+        iyy="0.0087016"
+        iyz="0.00309"
+        izz="0.0044686" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://new_mod/meshes/link_5.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://new_mod/meshes/link_5.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="j5"
+    type="continuous">
+    <origin
+      xyz="0 0 0.17798"
+      rpy="0 0 -0.063253" />
+    <parent
+      link="link_4" />
+    <child
+      link="link_5" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-2.96"
+      upper="2.96"
+      effort="300"
+      velocity="10" />
+    <dynamics
+      damping="0.5" />
+  </joint>
+  <link
+    name="link_6">
+    <inertial>
+      <origin
+        xyz="6.6161E-06 0.00034251 0.00063397"
+        rpy="0 0 0" />
+      <mass
+        value="1.8095" />
+      <inertia
+        ixx="0.0049031"
+        ixy="4.276E-07"
+        ixz="2.1041E-07"
+        iyy="0.0046945"
+        iyz="0.00024419"
+        izz="0.0035676" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://new_mod/meshes/link_6.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://new_mod/meshes/link_6.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="j6"
+    type="continuous">
+    <origin
+      xyz="0 0 0.22202"
+      rpy="0 -0.028951 0" />
+    <parent
+      link="link_5" />
+    <child
+      link="link_6" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-2.96"
+      upper="2.96"
+      effort="300"
+      velocity="10" />
+    <dynamics
+      damping="0.5" />
+  </joint>
+  <link
+    name="end_effector">
+    <inertial>
+      <origin
+        xyz="0.0001229 0.049672 1.3559E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.43846" />
+      <inertia
+        ixx="0.0002899"
+        ixy="-2.8273E-07"
+        ixz="-1.4763E-05"
+        iyy="0.00046203"
+        iyz="1.6452E-07"
+        izz="0.00034491" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://new_mod/meshes/end_effector.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://new_mod/meshes/end_effector.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="j7"
+    type="continuous">
+    <origin
+      xyz="0 0 0.07195"
+      rpy="1.5708 0 0.30343" />
+    <parent
+      link="link_6" />
+    <child
+      link="end_effector" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="-2.96"
+      upper="2.96"
+      effort="300"
+      velocity="10" />
+    <dynamics
+      damping="0.5" />
+  </joint>
+</robot>
