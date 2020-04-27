@@ -28,11 +28,7 @@
         <mesh
           filename="package://new_mod/meshes/base_link.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.9098 0.44314 0.031373 1" />
-      </material>
+     <material name="Orange"/>
     </visual>
     <collision>
       <origin
@@ -68,11 +64,7 @@
         <mesh
           filename="package://new_mod/meshes/link_1.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="1 1 1 1" />
-      </material>
+     <material name="Blue"/>
     </visual>
     <collision>
       <origin
@@ -128,11 +120,7 @@
         <mesh
           filename="package://new_mod/meshes/link_2.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.79216 0.81961 0.93333 1" />
-      </material>
+     <material name="Blue"/>
     </visual>
     <collision>
       <origin
@@ -188,11 +176,7 @@
         <mesh
           filename="package://new_mod/meshes/link_3.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.79216 0.81961 0.93333 1" />
-      </material>
+     <material name="Orange"/>
     </visual>
     <collision>
       <origin
@@ -248,11 +232,7 @@
         <mesh
           filename="package://new_mod/meshes/link_4.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.79216 0.81961 0.93333 1" />
-      </material>
+     <material name="Blue"/>
     </visual>
     <collision>
       <origin
@@ -308,11 +288,7 @@
         <mesh
           filename="package://new_mod/meshes/link_5.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.79216 0.81961 0.93333 1" />
-      </material>
+     <material name="Orange"/>
     </visual>
     <collision>
       <origin
@@ -368,11 +344,7 @@
         <mesh
           filename="package://new_mod/meshes/link_6.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.79216 0.81961 0.93333 1" />
-      </material>
+     <material name="Orange"/>
     </visual>
     <collision>
       <origin
@@ -426,13 +398,9 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://new_mod/meshes/end_effector.STL" />
+          filename="package://new_mod/meshes/end_effector2.obj" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.79216 0.81961 0.93333 1" />
-      </material>
+     <material name="Blue"/>
     </visual>
     <collision>
       <origin
@@ -440,7 +408,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://new_mod/meshes/end_effector.STL" />
+          filename="package://new_mod/meshes/end_effector2.obj" />
       </geometry>
     </collision>
   </link>
