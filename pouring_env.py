@@ -82,6 +82,7 @@ def start(kukaUid):
     pos[2] = z
     move_to_pose(kukaUid, pos, orn)
     time.sleep(0.01)
+  time.sleep(2)
   '''Test wrist angle cntrl
   for ang in np.arange(start= -1.5, stop= 1.5, step= 0.10, dtype= np.float32):
     move_to_pose(kukaUid, pos, orn, ang)
