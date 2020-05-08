@@ -28,7 +28,6 @@
         <mesh
           filename="package://new_mod/meshes/base_link.STL" />
       </geometry>
-     <material name="Orange"/>
     </visual>
     <collision>
       <origin
@@ -120,7 +119,6 @@
         <mesh
           filename="package://new_mod/meshes/link_2.STL" />
       </geometry>
-     <material name="Blue"/>
     </visual>
     <collision>
       <origin
@@ -176,7 +174,6 @@
         <mesh
           filename="package://new_mod/meshes/link_3.STL" />
       </geometry>
-     <material name="Orange"/>
     </visual>
     <collision>
       <origin
@@ -232,7 +229,6 @@
         <mesh
           filename="package://new_mod/meshes/link_4.STL" />
       </geometry>
-     <material name="Blue"/>
     </visual>
     <collision>
       <origin
@@ -288,7 +284,6 @@
         <mesh
           filename="package://new_mod/meshes/link_5.STL" />
       </geometry>
-     <material name="Orange"/>
     </visual>
     <collision>
       <origin
@@ -344,7 +339,6 @@
         <mesh
           filename="package://new_mod/meshes/link_6.STL" />
       </geometry>
-     <material name="Orange"/>
     </visual>
     <collision>
       <origin
@@ -400,7 +394,6 @@
         <mesh
           filename="package://new_mod/meshes/end_effector2.obj" />
       </geometry>
-     <material name="Blue"/>
     </visual>
     <collision>
       <origin
