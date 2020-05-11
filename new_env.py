@@ -2,9 +2,6 @@ import pybullet as pb
 import pybullet_data
 import time
 import os
-import gym
-from gym import spaces
-from gym.utils import seeding
 import cv2 
 import numpy as np
 
@@ -22,7 +19,6 @@ robotid = pb.loadURDF("new_mod/urdf/new_mod.urdf",[0.0,0.2,0.1] ,useFixedBase= 1
 glass = pb.loadURDF("glass2/urdf/glass.urdf", [-0.15, 0.6, 0.625],[0.0, 0.0, 0.0, 1.0], useFixedBase= 1)
 #robotid = pb.loadURDF("kuka_iiwa/model.urdf")
 numJoints = pb.getNumJoints(robotid)
-print("Number of Joints: ", numJoints)
 jointIds = []
 paramIds = []
 
@@ -37,7 +33,7 @@ for i in range(7):
 pb.setRealTimeSimulation(1)
 time.sleep(0.1)
 sphere_id = pb.loadURDF("pybullet_data1/sphere_1cm.urdf", [0.0, 0.65, 0.8])
-pb.changeDynamics(sphere_id, -1, linearDamping=1.0, angularDamping=1.0)
+pb.changeDynamics(sphere_id, -1, linearDamping=1.0, angularDamping=1.0, rollingFriction=0.0)
 
 
 def main():
@@ -56,13 +52,16 @@ def main():
     while(1):  
 
         if img:
-            _,_,img_arr,_,seg = pb.getCameraImage(width=128,
-                               height=128,
+            _,_,img_arr,_,seg = pb.getCameraImage(width=256,
+                               height=256,
                                viewMatrix=viewMat,
                                projectionMatrix=projMatrix,
                                renderer = pb.ER_TINY_RENDERER)
         '''closestPoints = pb.getClosestPoints(glass, sphere_id, 0.01, -1)
         print("Points ", closestPoints)'''
+        #cv2.imwrite("test.jpg", img_arr[:,:,:3])
+        pos_ee = pb.getLinkState(robotid, 6)
+        print(pos_ee[0])
         gnd_collision = True if len(pb.getClosestPoints(sphere_id, table, 0.01))> 0 else False
         glass_collision = True if len(pb.getClosestPoints(sphere_id, glass, 0.01))+ len(pb.getClosestPoints(robotid , glass, 0.01))>0 else False
         spherePos, _ = pb.getBasePositionAndOrientation(sphere_id)
