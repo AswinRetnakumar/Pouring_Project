@@ -22,7 +22,7 @@ if not flags are set during init, the env will work as a continuous action space
 class kukaPouring(gym.Env):
     metadata = {'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 50}
 
-    def __init__(self, renders= False, random_ops = False, path_planning = False, is_discrete = False, absmov = True, manual_cntrl = True):
+    def __init__(self, renders=True, random_ops = False, path_planning = False, is_discrete = True, is_multidiscrete = False, absmov = True, manual_cntrl = False):
         
         self._observation = []
         self._envStepCounter = 0
@@ -33,6 +33,7 @@ class kukaPouring(gym.Env):
         self._height = 128
         self.terminated = 0
         self._isDiscrete = is_discrete
+        self._isMultiDiscrete = is_multidiscrete
         self._absmovement = absmov
         self.max_steps = 500
 
@@ -40,7 +41,7 @@ class kukaPouring(gym.Env):
 
         self.viewMat = pb.computeViewMatrix(cameraEyePosition=[0.1, 0.5, 2.0],cameraTargetPosition= [0.0, 0.5, 0.75], cameraUpVector=[0,1.0,0])
         self.projMatrix = pb.computeProjectionMatrixFOV(fov=45.0, aspect=1.0, nearVal=0.5, farVal=2.0)
-        self._robot_state = []*4
+        self._robot_state = []*3
         self._eeAng = 0.0
         if self._renders:
             cid = pb.connect(pb.SHARED_MEMORY)
@@ -53,8 +54,11 @@ class kukaPouring(gym.Env):
         pb.setInternalSimFlags(0)
         self.reset()
         
-        if (self._isDiscrete):
+        if (self._isMultiDiscrete):
             self.action_space = spaces.MultiDiscrete([3,3,3,3]) #lower bound is always 0, upper bound is specified but never used, discrete sampling within range [0,upper)
+        elif (self._isDiscrete):
+            self.action_space = spaces.Discrete(9)
+
         else:
             action_dim = 4
             self._action_bound = 1
@@ -62,7 +66,7 @@ class kukaPouring(gym.Env):
             self.action_space = spaces.Box(-action_high, action_high, dtype=np.float32)
             self.observation_space = spaces.Box(low=0,
                                         high=255,
-                                        shape=(self._height, self._width, 3),
+                                        shape=(self._height, self._width, 1),
                                         dtype=np.uint8)
 
     def reset(self):
@@ -80,10 +84,11 @@ class kukaPouring(gym.Env):
 
 
         pos = [0.0, 0.5, 0.75]
+
         jointPoses = pb.calculateInverseKinematics(self.robotid, 6, pos)
         for i in range(7):
             pb.setJointMotorControl2(self.robotid, i, pb.POSITION_CONTROL, jointPoses[i])
-
+        self._robot_state = pos 
         pb.setRealTimeSimulation(1)
         time.sleep(0.1)
         self.sphere_id = pb.loadURDF("pybullet_data1/sphere_1cm.urdf", [0.0, 0.65, 0.8])
@@ -104,15 +109,15 @@ class kukaPouring(gym.Env):
                                projectionMatrix= self.projMatrix,
                                renderer = pb.ER_TINY_RENDERER)
         
-        self._observation = img_arr[:, :, :3]
+        self._observation = img_arr[:, :, 1:2]
         
         return np.array(self._observation)
 
     def step(self, action):
         
-        self._robot_state = list(pb.getLinkState(self.robotid, 6)[0])
+        #self._robot_state = list(pb.getLinkState(self.robotid, 6)[0])
 
-        if self._isDiscrete:
+        if self._isMultiDiscrete:
             dx= [-0.01, 0.0, 0.01][action[0]]
             dy= [-0.01, 0.0, 0.01][action[1]]
             dz= [-0.01, 0.0, 0.01][action[2]]
@@ -121,10 +126,27 @@ class kukaPouring(gym.Env):
             action_mod = []
             for a, s in zip(act, self._robot_state):
                 action_mod.append(a+s)
+            da = da+ self._eeAng
             action_mod.append(da)
             self._eeAng = da
             self.move_robot(action_mod)
 
+        if self._isDiscrete:
+            dx= [0.0, -0.01, 0.01, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0][action]
+            dy= [0.0, 0.0, 0.0, -0.01, 0.01, 0.0, 0.0, 0.0, 0.0][action]
+            dz= [0.0, 0.0, 0.0, 0.0, 0.0, -0.01, 0.01, 0.0, 0.0][action]
+            da= [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.1, 0.1][action]
+            act = [dx, dy, dz]
+            action_mod = []
+            for a, s in zip(act, self._robot_state):
+                action_mod.append(a+s)
+
+            self._robot_state = action_mod
+            da += self._eeAng
+            action_mod.append(da)
+            self._eeAng = da
+            print(action_mod)
+            self.move_robot(action_mod)
 
         else: 
             if self._absmovement:
@@ -134,12 +156,12 @@ class kukaPouring(gym.Env):
             else:
                 action_mod = []
                 for a, s in zip(action[:3], self._robot_state):
-                    action_mod.append(a*0.01 +s)
+                    action_mod.append(a*0.1 +s)
                 action_mod.append((action[3]*0.1)+self._eeAng)
                 self._eeAng = action_mod[-1]
                 self.move_robot(action_mod)
 
-        time.sleep(0.5)
+        time.sleep(1)
         reward, done = self._is_termination()
 
         return self.getObservation(), reward, done , {}
@@ -157,7 +179,8 @@ class kukaPouring(gym.Env):
     def move_robot(self, action):
         
         assert len(action) == 4, "incorrect action length after processing..."
-        jointPoses = pb.calculateInverseKinematics(self.robotid, 6, action[:3])
+        pos = action[:3]
+        jointPoses = pb.calculateInverseKinematics(self.robotid, 6, pos)
         for i in range(7):
             pb.setJointMotorControl2(self.robotid, i, pb.POSITION_CONTROL, jointPoses[i])
         pb.setJointMotorControl2(self.robotid,

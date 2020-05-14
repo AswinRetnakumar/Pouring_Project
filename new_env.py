@@ -59,7 +59,7 @@ def main():
                                renderer = pb.ER_TINY_RENDERER)
         '''closestPoints = pb.getClosestPoints(glass, sphere_id, 0.01, -1)
         print("Points ", closestPoints)'''
-        #cv2.imwrite("test.jpg", img_arr[:,:,:3])
+        cv2.imwrite("test.jpg", img_arr[:,:,2:3])
         pos_ee = pb.getLinkState(robotid, 6)
         print(pos_ee[0])
         gnd_collision = True if len(pb.getClosestPoints(sphere_id, table, 0.01))> 0 else False
