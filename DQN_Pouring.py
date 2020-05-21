@@ -2,15 +2,17 @@ import gym
 import numpy as np
 import random
 from keras.models import Sequential
-from keras.layers import Dense, Dropout
+from keras.layers import Dense, Dropout, Conv2D, MaxPooling2D, Flatten
 from keras.optimizers import Adam
-
+from kukaPouring import kukaPouring
 from collections import deque
+import time
+import pickle
 
 class DQN:
     def __init__(self, env):
         self.env     = env
-        self.memory  = deque(maxlen=2000)
+        self.memory  = deque(maxlen=10000)
         
         self.gamma = 0.85
         self.epsilon = 1.0
@@ -25,9 +27,18 @@ class DQN:
     def create_model(self):
         model   = Sequential()
         state_shape  = self.env.observation_space.shape
-        model.add(Dense(24, input_dim=state_shape[0], activation="relu"))
-        model.add(Dense(48, activation="relu"))
-        model.add(Dense(24, activation="relu"))
+        print("State shape:", state_shape)
+        model.add(Conv2D(32, (8, 4), padding ='same', activation = 'relu',input_shape = state_shape))
+        model.add(Conv2D(64, (5, 5), padding ='same', activation = 'relu'))
+        model.add(MaxPooling2D(pool_size = (2,2), strides = None,padding = 'valid',data_format = None)) #pooling to reduce position dependence of features, downsampling done
+        model.add(Dropout(0.25))
+        '''
+        model.add(Conv2D(64, (4,2), padding = 'same', activation='relu'))
+        model.add(Conv2D(64, (3,3), padding = 'same', activation='relu'))
+        model.add(MaxPooling2D(pool_size = (2,2), strides = None,padding = 'valid',data_format = None))
+        '''
+        model.add(Flatten())
+        model.add(Dense(256, activation="relu"))
         model.add(Dense(self.env.action_space.n))
         model.compile(loss="mean_squared_error",
             optimizer=Adam(lr=self.learning_rate))
@@ -38,6 +49,7 @@ class DQN:
         self.epsilon = max(self.epsilon_min, self.epsilon)
         if np.random.random() < self.epsilon:
             return self.env.action_space.sample()
+        
         return np.argmax(self.model.predict(state)[0])
 
     def remember(self, state, action, reward, new_state, done):
@@ -70,24 +82,30 @@ class DQN:
         self.model.save(fn)
 
 def main():
-    env     = gym.make("MountainCar-v0")
+    env     = kukaPouring()
+    time.sleep(0.5)
     gamma   = 0.9
     epsilon = .95
 
     trials  = 1000
-    trial_len = 500
+    trial_len = env.max_steps
 
     # updateTargetNetwork = 1000
     dqn_agent = DQN(env=env)
     steps = []
+    
     for trial in range(trials):
-        cur_state = env.reset().reshape(1,2)
+        replay_file = open('experience_env', 'ab') 
+        cur_state = env.reset()
+        time.sleep(0.5)
+        accum_rwd = 0
         for step in range(trial_len):
             action = dqn_agent.act(cur_state)
             new_state, reward, done, _ = env.step(action)
-
+            print(step)
+            accum_rwd += reward
             # reward = reward if not done else -20
-            new_state = new_state.reshape(1,2)
+        
             dqn_agent.remember(cur_state, action, reward, new_state, done)
             
             dqn_agent.replay()       # internally iterates default (prediction) model
@@ -96,14 +114,14 @@ def main():
             cur_state = new_state
             if done:
                 break
-        if step >= 199:
-            print("Failed to complete in trial {}".format(trial))
-            if step % 10 == 0:
-                dqn_agent.save_model("trial-{}.model".format(trial))
-        else:
-            print("Completed in {} trials".format(trial))
-            dqn_agent.save_model("success.model")
-            break
+
+        print("Step: "+ str(step))
+        print("Reward for iter "+ str(trial)+":"+str(accum_rwd))   
+        pickle.dump(dqn_agent.memory ,replay_file)  
+        if trial % 10 == 0:
+            dqn_agent.save_model("trial-{}.model".format(trial))
+        replay_file.close()
+            
 
 if __name__ == "__main__":
     main()

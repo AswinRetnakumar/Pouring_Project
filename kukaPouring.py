@@ -35,7 +35,7 @@ class kukaPouring(gym.Env):
         self._isDiscrete = is_discrete
         self._isMultiDiscrete = is_multidiscrete
         self._absmovement = absmov
-        self.max_steps = 500
+        self.max_steps = 150
 
         self.table, self.robotid, self.glass, self.plane = None, None, None, None
 
@@ -43,12 +43,14 @@ class kukaPouring(gym.Env):
         self.projMatrix = pb.computeProjectionMatrixFOV(fov=45.0, aspect=1.0, nearVal=0.5, farVal=2.0)
         self._robot_state = []*3
         self._eeAng = 0.0
+        self.pre_dist = 0.0
         if self._renders:
             cid = pb.connect(pb.SHARED_MEMORY)
             if (cid < 0):
                 pb.connect(pb.GUI)
         else:
             pb.connect(pb.DIRECT)        
+
         pb.setAdditionalSearchPath(pybullet_data.getDataPath())
 
         pb.setInternalSimFlags(0)
@@ -64,7 +66,8 @@ class kukaPouring(gym.Env):
             self._action_bound = 1
             action_high = np.array([self._action_bound] * action_dim)
             self.action_space = spaces.Box(-action_high, action_high, dtype=np.float32)
-            self.observation_space = spaces.Box(low=0,
+        
+        self.observation_space = spaces.Box(low=0,
                                         high=255,
                                         shape=(self._height, self._width, 1),
                                         dtype=np.uint8)
@@ -75,6 +78,7 @@ class kukaPouring(gym.Env):
         self._envStepCounter = 0
         pb.resetSimulation()
         pb.setGravity(0,0,-9.8)
+        self.pre_dist = 0.0
         self.plane = pb.loadURDF("plane.urdf")
         path_data = '/home/aswin/Desktop/pouring_sim/pybullet_data1'
         self.table = pb.loadURDF(os.path.join(path_data, "table/table.urdf"), 0.0, 1.0, 0, 0.0, 0.0, 0.0, 1.0)
@@ -92,10 +96,10 @@ class kukaPouring(gym.Env):
         pb.setRealTimeSimulation(1)
         time.sleep(0.1)
         self.sphere_id = pb.loadURDF("pybullet_data1/sphere_1cm.urdf", [0.0, 0.65, 0.8])
-        pb.changeDynamics(self.sphere_id, -1, linearDamping=0.0, angularDamping=0.1)
+        pb.changeDynamics(self.sphere_id, -1, linearDamping=0.0, angularDamping=0.0, rollingFriction = 0.0)
         self._observation = self.getObservation()
-        self._robot_state = list(pb.getLinkState(self.robotid, 6)[0])
         self._eeAng = 0.0
+
         return np.array(self._observation)
 
     def __del__(self):
@@ -107,11 +111,11 @@ class kukaPouring(gym.Env):
                                height=self._height,
                                viewMatrix= self.viewMat,
                                projectionMatrix= self.projMatrix,
-                               renderer = pb.ER_TINY_RENDERER)
+                               )
         
-        self._observation = img_arr[:, :, 1:2]
-        
-        return np.array(self._observation)
+        self._observation = np.array(img_arr[:, :, 1:2])
+        self._observation = self._observation.reshape(-1,128,128, 1)
+        return self._observation
 
     def step(self, action):
         
@@ -135,7 +139,7 @@ class kukaPouring(gym.Env):
             dx= [0.0, -0.01, 0.01, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0][action]
             dy= [0.0, 0.0, 0.0, -0.01, 0.01, 0.0, 0.0, 0.0, 0.0][action]
             dz= [0.0, 0.0, 0.0, 0.0, 0.0, -0.01, 0.01, 0.0, 0.0][action]
-            da= [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.1, 0.1][action]
+            da= [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5, 0.5][action]
             act = [dx, dy, dz]
             action_mod = []
             for a, s in zip(act, self._robot_state):
@@ -145,7 +149,7 @@ class kukaPouring(gym.Env):
             da += self._eeAng
             action_mod.append(da)
             self._eeAng = da
-            print(action_mod)
+            #print(action_mod)
             self.move_robot(action_mod)
 
         else: 
@@ -161,7 +165,7 @@ class kukaPouring(gym.Env):
                 self._eeAng = action_mod[-1]
                 self.move_robot(action_mod)
 
-        time.sleep(1)
+        time.sleep(0.5)
         reward, done = self._is_termination()
 
         return self.getObservation(), reward, done , {}
@@ -195,6 +199,7 @@ class kukaPouring(gym.Env):
                                                  len(pb.getClosestPoints(self.sphere_id, self.plane, 0.01)))> 0 else False
         glass_collision = True if (len(pb.getClosestPoints(self.sphere_id, self.glass, 0.01))+
                                                  len(pb.getClosestPoints(self.robotid , self.glass, 0.01)))>0 else False
+        bot_collision = True if len(pb.getClosestPoints(self.robotid, self.table, 0.01)) > 0 else False
         spherePos, _ = pb.getBasePositionAndOrientation(self.sphere_id)
         s = 0
         for i, j in zip(spherePos, (-0.15, 0.6,0.641)):
@@ -203,11 +208,11 @@ class kukaPouring(gym.Env):
 
         capture = True if s< 0.015 else False
         done = False
-        if (gnd_collision or glass_collision) and not capture:
-            reward = -10
+        if (gnd_collision or glass_collision or bot_collision) and not capture:
+            reward = -500
             done = True
         elif glass_collision and capture:
-            reward = 15
+            reward = 1000
             done = True
         else:
             reward = self._reward()
@@ -221,8 +226,13 @@ class kukaPouring(gym.Env):
         for i,j in zip(goal,list(cur)):
             dist += (i-j)**2
         dist = dist**0.5
-        return -50*dist
-
+        rwd = dist - self.pre_dist
+        self.pre_dist = dist
+        if rwd != 0:
+            return -20*rwd
+        else:
+            return -100*dist
+            
     def plan_rrt(self):
         pass
     
