@@ -82,46 +82,90 @@ class DQN:
         self.model.save(fn)
 
 def main():
+
+    record = False
+    trials  = 25
+    
+    if record:
+        
+        env = kukaPouring()
+        trial_len = env.max_steps
+        dqn_agent = DQN(env=env)
+
+        for trial in range(trials):
+            replay_file = open('good_action', 'wb')
+            cur_state = env.reset()
+            time.sleep(0.5)
+            accum_rwd = 0
+            for step in range(trial_len):
+                action = int(input("Enter action [0:8]"))
+                if action > 8 or action==None:
+                    action = 0			
+                new_state, reward, done, _ = env.step(action)
+                accum_rwd += reward
+                # reward = reward if not done else -20
+            
+                dqn_agent.remember(cur_state, action, reward, new_state, done)
+                
+                cur_state = new_state
+                if done:
+                    break
+
+            print("Reward for iter "+ str(trial)+":"+str(accum_rwd))   
+            pickle.dump(dqn_agent.memory ,replay_file)
+            print ("Current Length: ", len(dqn_agent.memory))
+            replay_file.close() 
+
+
     env     = kukaPouring()
     time.sleep(0.5)
     gamma   = 0.9
     epsilon = .95
-
-    trials  = 1000
+    
+    trials  = 100
     trial_len = env.max_steps
 
     # updateTargetNetwork = 1000
     dqn_agent = DQN(env=env)
     steps = []
-    
+    infile = open('good_action','rb')
+    dqn_agent.memory = pickle.load(infile)
+    infile.close()
+    print ("Current Length: ", len(dqn_agent.memory))
+
+
     for trial in range(trials):
-        replay_file = open('experience_env', 'ab') 
+        replay_file = open('experience_env', 'wb') 
         cur_state = env.reset()
         time.sleep(0.5)
         accum_rwd = 0
         for step in range(trial_len):
             action = dqn_agent.act(cur_state)
             new_state, reward, done, _ = env.step(action)
-            print(step)
+            print(str(step)+":"+str(reward))
             accum_rwd += reward
             # reward = reward if not done else -20
         
             dqn_agent.remember(cur_state, action, reward, new_state, done)
             
-            dqn_agent.replay()       # internally iterates default (prediction) model
-            dqn_agent.target_train() # iterates target model
-
+            
             cur_state = new_state
             if done:
                 break
+	if trial % 2 == 0:
+                print("Training.....")
+                dqn_agent.replay()       # internally iterates default (prediction) model
+                dqn_agent.target_train() # iterates target model
 
         print("Step: "+ str(step))
-        print("Reward for iter "+ str(trial)+":"+str(accum_rwd))   
+        print("Reward for iter "+ str(trial)+":"+str(accum_rwd)) 
+	print("Length of mem "+str(len(dqn_agent.memory)))  
         pickle.dump(dqn_agent.memory ,replay_file)  
         if trial % 10 == 0:
             dqn_agent.save_model("trial-{}.model".format(trial))
         replay_file.close()
             
+
 
 if __name__ == "__main__":
     main()

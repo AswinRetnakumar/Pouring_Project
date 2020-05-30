@@ -35,7 +35,7 @@ class kukaPouring(gym.Env):
         self._isDiscrete = is_discrete
         self._isMultiDiscrete = is_multidiscrete
         self._absmovement = absmov
-        self.max_steps = 150
+        self.max_steps = 50
 
         self.table, self.robotid, self.glass, self.plane = None, None, None, None
 
@@ -165,7 +165,7 @@ class kukaPouring(gym.Env):
                 self._eeAng = action_mod[-1]
                 self.move_robot(action_mod)
 
-        time.sleep(0.5)
+        time.sleep(2.0)
         reward, done = self._is_termination()
 
         return self.getObservation(), reward, done , {}
@@ -229,9 +229,9 @@ class kukaPouring(gym.Env):
         rwd = dist - self.pre_dist
         self.pre_dist = dist
         if rwd != 0:
-            return -20*rwd
+            return -1000*rwd
         else:
-            return -100*dist
+            return -10
             
     def plan_rrt(self):
         pass
