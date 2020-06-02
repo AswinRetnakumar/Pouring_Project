@@ -29,18 +29,22 @@ class kukaPouring(gym.Env):
         self._renders = renders
         self._manual_cntrl = manual_cntrl
         self._path_planning = path_planning
-        self._width = 128
-        self._height = 128
-        self.terminated = 0
+        self._width = 140
+        self._height = 140
+        self.terminated = 50
         self._isDiscrete = is_discrete
         self._isMultiDiscrete = is_multidiscrete
         self._absmovement = absmov
-        self.max_steps = 50
+        self.max_steps = 30
 
         self.table, self.robotid, self.glass, self.plane = None, None, None, None
-
+        """ Use for top view
         self.viewMat = pb.computeViewMatrix(cameraEyePosition=[0.1, 0.5, 2.0],cameraTargetPosition= [0.0, 0.5, 0.75], cameraUpVector=[0,1.0,0])
         self.projMatrix = pb.computeProjectionMatrixFOV(fov=45.0, aspect=1.0, nearVal=0.5, farVal=2.0)
+        """
+        self.viewMat = pb.computeViewMatrix(cameraEyePosition=[0.0, 1.2, 0.78],cameraTargetPosition= [0.0, 0.6, 0.78], cameraUpVector=[0.0,0.0,1.0])
+        self.projMatrix = pb.computeProjectionMatrixFOV(fov=60.0, aspect=1.0, nearVal=0.2, farVal=1.8)
+
         self._robot_state = []*3
         self._eeAng = 0.0
         self.pre_dist = 0.0
@@ -59,7 +63,8 @@ class kukaPouring(gym.Env):
         if (self._isMultiDiscrete):
             self.action_space = spaces.MultiDiscrete([3,3,3,3]) #lower bound is always 0, upper bound is specified but never used, discrete sampling within range [0,upper)
         elif (self._isDiscrete):
-            self.action_space = spaces.Discrete(9)
+            #self.action_space = spaces.Discrete(9)
+	    self.action_space = spaces.Discrete(7)
 
         else:
             action_dim = 4
@@ -114,7 +119,8 @@ class kukaPouring(gym.Env):
                                )
         
         self._observation = np.array(img_arr[:, :, 1:2])
-        self._observation = self._observation.reshape(-1,128,128, 1)
+
+        self._observation = self._observation.reshape(-1,self._height,self._height, 1)
         return self._observation
 
     def step(self, action):
@@ -135,12 +141,21 @@ class kukaPouring(gym.Env):
             self._eeAng = da
             self.move_robot(action_mod)
 
+
+        """
+        dx= [0.0, -0.01, 0.01, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0][action]
+        dy= [0.0, 0.0, 0.0, -0.01, 0.01, 0.0, 0.0, 0.0, 0.0][action]
+        dz= [0.0, 0.0, 0.0, 0.0, 0.0, -0.01, 0.01, 0.0, 0.0][action]
+        da= [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5, 0.5][action]
+        """
+
         if self._isDiscrete:
-            dx= [0.0, -0.01, 0.01, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0][action]
-            dy= [0.0, 0.0, 0.0, -0.01, 0.01, 0.0, 0.0, 0.0, 0.0][action]
-            dz= [0.0, 0.0, 0.0, 0.0, 0.0, -0.01, 0.01, 0.0, 0.0][action]
-            da= [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5, 0.5][action]
+            dx= [0.0, -0.01, 0.01, 0.0, 0.0, 0.0, 0.0][action]
+            dz= [0.0, 0.0, 0.0, -0.01, 0.01, 0.0, 0.0][action]
+            da= [0.0, 0.0, 0.0, 0.0, 0.0, -0.5, 0.5][action]
+            dy = 0.0
             act = [dx, dy, dz]
+
             action_mod = []
             for a, s in zip(act, self._robot_state):
                 action_mod.append(a+s)
@@ -184,13 +199,14 @@ class kukaPouring(gym.Env):
         
         assert len(action) == 4, "incorrect action length after processing..."
         pos = action[:3]
-        jointPoses = pb.calculateInverseKinematics(self.robotid, 6, pos)
-        for i in range(7):
-            pb.setJointMotorControl2(self.robotid, i, pb.POSITION_CONTROL, jointPoses[i])
-        pb.setJointMotorControl2(self.robotid,
-                                6,
-                                pb.POSITION_CONTROL,
-                                targetPosition=action[3])
+        if( (pos[0]>=-0.3) and (pos[0]<=0.3) and (pos[2]>=0.75) and (pos[2]<=0.9)):
+            jointPoses = pb.calculateInverseKinematics(self.robotid, 6, pos)
+            for i in range(7):
+                pb.setJointMotorControl2(self.robotid, i, pb.POSITION_CONTROL, jointPoses[i])
+            pb.setJointMotorControl2(self.robotid,
+                                    6,
+                                    pb.POSITION_CONTROL,
+                                    targetPosition=action[3])
 
     def _is_termination(self):
         
@@ -206,7 +222,7 @@ class kukaPouring(gym.Env):
             s += (j-i)**2
         s = s**0.5
 
-        capture = True if s< 0.015 else False
+        capture = True if s< 0.020 else False
         done = False
         if (gnd_collision or glass_collision or bot_collision) and not capture:
             reward = -500
@@ -228,8 +244,8 @@ class kukaPouring(gym.Env):
         dist = dist**0.5
         rwd = dist - self.pre_dist
         self.pre_dist = dist
-        if rwd != 0:
-            return -1000*rwd
+        if abs(rwd) > 0.00001:
+            return -100*rwd
         else:
             return -10
             

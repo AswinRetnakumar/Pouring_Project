@@ -16,9 +16,9 @@ class DQN:
         
         self.gamma = 0.85
         self.epsilon = 1.0
-        self.epsilon_min = 0.01
+        self.epsilon_min = 0.05
         self.epsilon_decay = 0.995
-        self.learning_rate = 0.005
+        self.learning_rate = 0.009
         self.tau = .125
 
         self.model        = self.create_model()
@@ -28,17 +28,20 @@ class DQN:
         model   = Sequential()
         state_shape  = self.env.observation_space.shape
         print("State shape:", state_shape)
-        model.add(Conv2D(32, (8, 4), padding ='same', activation = 'relu',input_shape = state_shape))
-        model.add(Conv2D(64, (5, 5), padding ='same', activation = 'relu'))
-        model.add(MaxPooling2D(pool_size = (2,2), strides = None,padding = 'valid',data_format = None)) #pooling to reduce position dependence of features, downsampling done
-        model.add(Dropout(0.25))
+        model.add(Conv2D(64, (5, 5), padding ='same', activation = 'relu',input_shape = state_shape))
+        model.add(Conv2D(64, (5, 3), padding ='same', activation = 'relu'))
+        #model.add(MaxPooling2D(pool_size = (2,2), strides = None,padding = 'valid',data_format = None)) #pooling to reduce position dependence of features, downsampling done
+        #model.add(Dropout(0.25))
+        model.add(Conv2D(32, (3,3), padding = 'same', activation='relu'))
+        #model.add(Conv2D(32, (3,3), padding = 'same', activation='relu'))
+        #model.add(Conv2D(32, (3,3), padding = 'same', activation='relu'))
         '''
         model.add(Conv2D(64, (4,2), padding = 'same', activation='relu'))
-        model.add(Conv2D(64, (3,3), padding = 'same', activation='relu'))
+        
         model.add(MaxPooling2D(pool_size = (2,2), strides = None,padding = 'valid',data_format = None))
         '''
         model.add(Flatten())
-        model.add(Dense(256, activation="relu"))
+        model.add(Dense(128, activation="relu"))
         model.add(Dense(self.env.action_space.n))
         model.compile(loss="mean_squared_error",
             optimizer=Adam(lr=self.learning_rate))
@@ -56,7 +59,7 @@ class DQN:
         self.memory.append([state, action, reward, new_state, done])
 
     def replay(self):
-        batch_size = 32
+        batch_size = 16
         if len(self.memory) < batch_size: 
             return
 
@@ -79,12 +82,12 @@ class DQN:
         self.target_model.set_weights(target_weights)
 
     def save_model(self, fn):
-        self.model.save(fn)
+        self.model.save_weights(fn)
 
 def main():
 
     record = False
-    trials  = 25
+    trials  = 1
     
     if record:
         
@@ -110,11 +113,13 @@ def main():
                 cur_state = new_state
                 if done:
                     break
-
             print("Reward for iter "+ str(trial)+":"+str(accum_rwd))   
-            pickle.dump(dqn_agent.memory ,replay_file)
-            print ("Current Length: ", len(dqn_agent.memory))
-            replay_file.close() 
+	    for _ in range(100):
+                for i in range(14):
+                    dqn_agent.memory.append(dqn_agent.memory[i])
+        pickle.dump(dqn_agent.memory ,replay_file)
+        print ("Current Length: ", len(dqn_agent.memory))
+        replay_file.close() 
 
 
     env     = kukaPouring()
@@ -152,16 +157,17 @@ def main():
             cur_state = new_state
             if done:
                 break
+        print("Step: "+ str(step))
+        print("Reward for iter "+ str(trial)+":"+str(accum_rwd)) 
+	print("Length of mem "+str(len(dqn_agent.memory))) 
 	if trial % 2 == 0:
                 print("Training.....")
                 dqn_agent.replay()       # internally iterates default (prediction) model
                 dqn_agent.target_train() # iterates target model
 
-        print("Step: "+ str(step))
-        print("Reward for iter "+ str(trial)+":"+str(accum_rwd)) 
-	print("Length of mem "+str(len(dqn_agent.memory)))  
+ 
         pickle.dump(dqn_agent.memory ,replay_file)  
-        if trial % 10 == 0:
+        if trial % 25 == 0:
             dqn_agent.save_model("trial-{}.model".format(trial))
         replay_file.close()
             

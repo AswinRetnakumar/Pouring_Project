@@ -24,8 +24,8 @@ paramIds = []
 
 img = True
 
-viewMat = pb.computeViewMatrix(cameraEyePosition=[0.1, 0.5, 2.0],cameraTargetPosition= [0.0, 0.5, 0.75], cameraUpVector=[0,1.0,0])
-projMatrix = pb.computeProjectionMatrixFOV(fov=45.0, aspect=1.0, nearVal=0.5, farVal=2.0)
+viewMat = pb.computeViewMatrix(cameraEyePosition=[0.0, 1.2, 0.78],cameraTargetPosition= [0.0, 0.6, 0.78], cameraUpVector=[0.0,0.0,1.0])
+projMatrix = pb.computeProjectionMatrixFOV(fov=60.0, aspect=1.0, nearVal=0.2, farVal=1.2)
 pos = [0.0, 0.5, 0.75]
 jointPoses = pb.calculateInverseKinematics(robotid, 6, pos)
 for i in range(7):
@@ -59,7 +59,7 @@ def main():
                                renderer = pb.ER_TINY_RENDERER)
         '''closestPoints = pb.getClosestPoints(glass, sphere_id, 0.01, -1)
         print("Points ", closestPoints)'''
-        cv2.imwrite("test.jpg", img_arr[:,:,2:3])
+        cv2.imwrite("test.jpg", img_arr[:,:,1:2])
         pos_ee = pb.getLinkState(robotid, 6)
         print(pos_ee[0])
         gnd_collision = True if len(pb.getClosestPoints(sphere_id, table, 0.01))> 0 else False
